@@ -6,6 +6,7 @@ use App\Repository\RecetteRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups ;
 
 /**
  * @ORM\Entity(repositoryClass=RecetteRepository::class)
@@ -20,22 +21,23 @@ class Recette
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
+    * @ORM\Column(type="string", length=255)
+    * @Groups("recette:read")
+    * @Groups("ingredient:read")"
+    */
     private $titre;
-
+    
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
+     * @Groups("recette:read")
+     * @Groups("ingredient:read")
      */
     private $resume;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Ingredient::class, inversedBy="recettes")
-     */
-    private $recettes;
 
     /**
      * @ORM\OneToMany(targetEntity=Operation::class, mappedBy="recette")
+     * @Groups("recette:read")
      */
     private $operations;
 
@@ -70,30 +72,6 @@ class Recette
     public function setResume(string $resume): self
     {
         $this->resume = $resume;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Ingredient[]
-     */
-    public function getRecettes(): Collection
-    {
-        return $this->recettes;
-    }
-
-    public function addRecette(Ingredient $recette): self
-    {
-        if (!$this->recettes->contains($recette)) {
-            $this->recettes[] = $recette;
-        }
-
-        return $this;
-    }
-
-    public function removeRecette(Ingredient $recette): self
-    {
-        $this->recettes->removeElement($recette);
 
         return $this;
     }

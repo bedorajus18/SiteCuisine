@@ -6,6 +6,7 @@ use App\Repository\IngredientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups ;
 
 /**
  * @ORM\Entity(repositoryClass=IngredientRepository::class)
@@ -21,13 +22,10 @@ class Ingredient
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("ingredient:read")
      */
     private $intitule;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Recette::class, mappedBy="recettes")
-     */
-    private $recettes;
 
     public function __construct()
     {
@@ -51,30 +49,4 @@ class Ingredient
         return $this;
     }
 
-    /**
-     * @return Collection|Recette[]
-     */
-    public function getRecettes(): Collection
-    {
-        return $this->recettes;
-    }
-
-    public function addRecette(Recette $recette): self
-    {
-        if (!$this->recettes->contains($recette)) {
-            $this->recettes[] = $recette;
-            $recette->addRecette($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRecette(Recette $recette): self
-    {
-        if ($this->recettes->removeElement($recette)) {
-            $recette->removeRecette($this);
-        }
-
-        return $this;
-    }
 }
