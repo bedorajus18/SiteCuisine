@@ -20,6 +20,7 @@ class Operation
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("ingredient:read")
      * @Groups("recette:read")
      */
     private $description;

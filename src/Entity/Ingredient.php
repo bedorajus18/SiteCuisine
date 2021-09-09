@@ -22,6 +22,7 @@ class Ingredient
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("recette:read")
      * @Groups("ingredient:read")
      */
     private $intitule;

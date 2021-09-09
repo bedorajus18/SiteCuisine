@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\RecetteRepository;
+use App\Repository\IngredientRepository;
+use App\Repository\RelationIngredientRecetteRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -38,13 +40,21 @@ class Recette
     /**
      * @ORM\OneToMany(targetEntity=Operation::class, mappedBy="recette")
      * @Groups("recette:read")
+     * @Groups("ingredient:read")
      */
     private $operations;
+
+    /**
+     * @ORM\OneToMany(targetEntity=RelationIngredientRecette::class, mappedBy="recettes", orphanRemoval=true)
+     * @Groups("recette:read")
+     */
+    private $recetteIngredients;
 
     public function __construct()
     {
         $this->recettes = new ArrayCollection();
         $this->operations = new ArrayCollection();
+        $this->recetteIngredients = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -100,6 +110,36 @@ class Recette
             // set the owning side to null (unless already changed)
             if ($operation->getRecette() === $this) {
                 $operation->setRecette(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|RecetteIngredient[]
+     */
+    public function getRecetteEntities(): Collection
+    {
+        return $this->recetteIngredients;
+    }
+
+    public function addRecetteIngredient(RecetteIngredient $recetteIngredient): self
+    {
+        if (!$this->recetteIngredients->contains($recetteIngredient)) {
+            $this->recetteIngredients[] = $recetteIngredient;
+            $recetteIngredient->setRecettes($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRecetteIngredient(RecetteIngredient $recetteIngredient): self
+    {
+        if ($this->recetteIngredients->removeElement($recetteIngredients)) {
+            // set the owning side to null (unless already changed)
+            if ($recetteIngredient->getRecettes() === $this) {
+                $recetteIngredient->setRecettes(null);
             }
         }
 
